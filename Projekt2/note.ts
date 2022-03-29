@@ -1,11 +1,13 @@
+import {Tag} from './tag'
+
 export class Note {
     title : string
     content : string
     createDate? : string
-    tags? : string[] 
+    tags? : Tag[] 
     id? : number
 
-    constructor({ title, content, createDate, tags }: { title: string; content: string; createDate?: string; tags?: string[] }) {
+    constructor(title: string, content: string, createDate?: string, tags?: Tag[]) {
         this.title = title
         this.content = content
         this.tags = tags        
