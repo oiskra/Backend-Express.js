@@ -10,14 +10,7 @@ export class Note {
     constructor(title: string, content: string, createDate?: string, tags?: Tag[]) {
         this.title = title
         this.content = content
-        this.tags = tags        
-
-        if(typeof createDate === 'undefined') {
-            this.createDate = new Date().toISOString()
-        }     
-        else { 
-            this.createDate = createDate
-        }
-           
+        this.createDate = createDate ?? new Date().toISOString()
+        this.tags = tags              
     }
 }
