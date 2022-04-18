@@ -1,16 +1,16 @@
 import express from 'express'
 import {Request, Response, NextFunction} from 'express'
-import {updateUserStorage, readStorage} from './additionalFunctions'
+import {updateUserStorage, readStorage} from './helperFunctions'
 import {Note} from './models/note'
 import {Tag} from './models/tag'
 import {User} from './models/user'
 import jwt from 'jsonwebtoken'
 
 const app = express()
-export let loggedUser : User
-export let notes: Note[] = []
-export let tags: Tag[] = []
-export let users: User[] = [] 
+let loggedUser : User
+let notes: Note[] = []
+let tags: Tag[] = []
+let users: User[] = [] 
 
 
 const auth = (req : Request, res : Response, next : NextFunction) => {
