@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-const connString = 'mongodb+srv://Olaf-Iskra-pab:Olaf-Iskra-pab@noteapi.srls2.mongodb.net/test';
+//const connString = 'mongodb+srv://Olaf-Iskra-pab:Olaf-Iskra-pab@noteapi.srls2.mongodb.net/test';
 
 async function main() {
-    const db = await mongoose.connect(connString)
+    
 
     const noteModel  = mongoose.model('notes', notesSchema)
 

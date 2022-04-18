@@ -1,9 +1,26 @@
 import fs from 'fs'
 import {User} from './models/user'
 import mongoose from "mongoose"
+import { resolve } from 'path'
+import { rejects } from 'assert'
 
 
 const connString = 'mongodb+srv://Olaf-Iskra-pab:Olaf-Iskra-pab@noteapi.srls2.mongodb.net/test'
+mongoose.connect(connString)
+
+const userSchema = new mongoose.Schema({
+    login: {
+        type: String,
+        required: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    notes: [],
+    tags: []
+})
+const userCollection = mongoose.model('Users', userSchema)
 
 
 interface DataStorage {
@@ -11,24 +28,19 @@ interface DataStorage {
     updateStorage(data: User[]) : Promise<void>
 }
 
-class DatabaseStorage implements DataStorage {
-
-    private db: mongoose.Connection
+export class DatabaseStorage implements DataStorage {
     
-    constructor(db: mongoose.Connection){
-        this.db = db
+    async readStorage(): Promise<String>{
+        let data = await userCollection.find()
+        return JSON.stringify(data)
     }
-    
-    async readStorage(): Promise<String> {
-        return new Promise(() => this.db.collection('users'))
+    async updateStorage(data: User[]): Promise<void> {
+        await userCollection.deleteMany()
+        await userCollection.insertMany(data)
     }
-    async updateStorage(): Promise<void> {
-        throw new Error("Method not implemented.")
-    }
-
 }
 
-class FileSystemStorage implements DataStorage {
+export class FileSystemStorage implements DataStorage {
     async readStorage(): Promise<string> {
         return await fs.promises.readFile('./data/users.json', 'utf-8');
     }
@@ -42,4 +54,3 @@ class FileSystemStorage implements DataStorage {
 
 }
 
-module.exports = FileSystemStorage, DatabaseStorage

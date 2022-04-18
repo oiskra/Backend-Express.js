@@ -5,13 +5,25 @@ import {Note} from './models/note'
 import {Tag} from './models/tag'
 import {User} from './models/user'
 import jwt from 'jsonwebtoken'
+import { fstat } from 'fs'
+import fs from 'fs'
+import {FileSystemStorage, DatabaseStorage} from './dataStorage'
 
 const app = express()
 let loggedUser : User
 let notes: Note[] = []
 let tags: Tag[] = []
-let users: User[] = [] 
+let users: User[] = []
+let storageOption: FileSystemStorage | DatabaseStorage 
 
+const defineDataStorage = async () => {
+    let readConfig = await fs.promises.readFile('./myConfig.json')
+    let config = JSON.parse(JSON.stringify(readConfig))
+    if(config.databaseStorage) 
+        storageOption = new DatabaseStorage()
+    else 
+        storageOption = new FileSystemStorage()   
+} 
 
 const auth = (req : Request, res : Response, next : NextFunction) => {
     const token : string = req.headers.authorization?.split(' ')[1] ?? ''
@@ -42,7 +54,7 @@ const auth = (req : Request, res : Response, next : NextFunction) => {
 
 app.use(express.json())
 
-app.post('/login', (req : Request, res : Response) => { 
+app.post('/login',(req : Request, res : Response) => { 
     if(req.body.login && req.body.password) {
         readStorage('./data/users').then((data) => {
             const tempArr : User[] = JSON.parse(JSON.stringify(data))
@@ -56,6 +68,9 @@ app.post('/login', (req : Request, res : Response) => {
                 res.status(200).send(token)
             }
         })
+        defineDataStorage()
+        .then(() => console.log(storageOption instanceof DatabaseStorage))
+        
     } else res.sendStatus(401)
 })
 
