@@ -1,12 +1,10 @@
 import fs from 'fs'
 import {User} from './models/user'
-import mongoose from "mongoose"
-import { resolve } from 'path'
-import { rejects } from 'assert'
+import mongoose from 'mongoose'
 
 
-const connString = 'mongodb+srv://Olaf-Iskra-pab:Olaf-Iskra-pab@noteapi.srls2.mongodb.net/test'
-mongoose.connect(connString)
+//const connString = 'mongodb+srv://Olaf-Iskra-pab:Olaf-Iskra-pab@noteapi.srls2.mongodb.net/NoteAPI?retryWrites=true&w=majority'
+mongoose.connect('mongodb://localhost:27017')
 
 const userSchema = new mongoose.Schema({
     login: {

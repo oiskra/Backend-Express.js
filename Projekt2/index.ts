@@ -13,16 +13,14 @@ let notes: Note[] = []
 let tags: Tag[] = []
 let users: User[] = []
 let storageOption: FileSystemStorage | DatabaseStorage 
-let config : string = require('./myConfig.json').json()
+let config = require('./myConfig.json')
 
-//let config1 = await import(__dirname + '/myConfig.json')
-const defineDataStorage = (next: NextFunction) => {
+const defineDataStorage = () => {
+    config = JSON.stringify(config)
     if(config.includes('true')) 
         storageOption = new DatabaseStorage()
     else 
         storageOption = new FileSystemStorage()   
-
-    next()
 } 
 
 const auth = (req : Request, res : Response, next : NextFunction) => {
@@ -38,7 +36,7 @@ const auth = (req : Request, res : Response, next : NextFunction) => {
         
         const user: User = JSON.parse(JSON.stringify(data))
         console.log(user)
-        readStorage('./data/users.json')
+        readStorage()
         .then(data => {
             users = JSON.parse(data)           
             if(users.some(u => u.login == user.login && u.password == user.password)) {
@@ -54,13 +52,14 @@ const auth = (req : Request, res : Response, next : NextFunction) => {
 
 app.use(express.json())
 
-app.post('/login', defineDataStorage, (req : Request, res : Response) => { 
+app.post('/login', (req : Request, res : Response) => { 
     if(req.body.login && req.body.password) {
+        defineDataStorage()
         console.log(storageOption instanceof DatabaseStorage)
-        readStorage('./data/users').then((data) => {
-            const tempArr : User[] = JSON.parse(JSON.stringify(data))
-            let index : number = tempArr.findIndex(u => u.login == req.body.login && u.password == req.body.password) 
-            if(index == -1) res.sendStatus(401)
+        readStorage().then((data) => {
+            const tempArr : User[] = JSON.parse(data)
+            let someUser : boolean = tempArr.some(u => u.login == req.body.login && u.password == req.body.password) 
+            if(someUser) res.sendStatus(401)
             else {
                 const user = new User(req.body.login, req.body.password, req.body.notes, req.body.tags)
                 const token = jwt.sign(JSON.stringify(user), 'secret')
