@@ -5,8 +5,6 @@ import {Note} from './models/note'
 import {Tag} from './models/tag'
 import {User} from './models/user'
 import jwt from 'jsonwebtoken'
-import { fstat } from 'fs'
-import fs from 'fs'
 import {FileSystemStorage, DatabaseStorage} from './dataStorage'
 
 const app = express()
@@ -15,14 +13,16 @@ let notes: Note[] = []
 let tags: Tag[] = []
 let users: User[] = []
 let storageOption: FileSystemStorage | DatabaseStorage 
+let config : string = require('./myConfig.json').json()
 
-const defineDataStorage = async () => {
-    let readConfig = await fs.promises.readFile('./myConfig.json')
-    let config = JSON.parse(JSON.stringify(readConfig))
-    if(config.databaseStorage) 
+//let config1 = await import(__dirname + '/myConfig.json')
+const defineDataStorage = (next: NextFunction) => {
+    if(config.includes('true')) 
         storageOption = new DatabaseStorage()
     else 
         storageOption = new FileSystemStorage()   
+
+    next()
 } 
 
 const auth = (req : Request, res : Response, next : NextFunction) => {
@@ -54,8 +54,9 @@ const auth = (req : Request, res : Response, next : NextFunction) => {
 
 app.use(express.json())
 
-app.post('/login',(req : Request, res : Response) => { 
+app.post('/login', defineDataStorage, (req : Request, res : Response) => { 
     if(req.body.login && req.body.password) {
+        console.log(storageOption instanceof DatabaseStorage)
         readStorage('./data/users').then((data) => {
             const tempArr : User[] = JSON.parse(JSON.stringify(data))
             let index : number = tempArr.findIndex(u => u.login == req.body.login && u.password == req.body.password) 
@@ -67,10 +68,7 @@ app.post('/login',(req : Request, res : Response) => {
                 updateUserStorage(users)
                 res.status(200).send(token)
             }
-        })
-        defineDataStorage()
-        .then(() => console.log(storageOption instanceof DatabaseStorage))
-        
+        })        
     } else res.sendStatus(401)
 })
 
