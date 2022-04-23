@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
     notes: [],
     tags: []
 })
-const userCollection = mongoose.model('Users', userSchema)
+const userModel = mongoose.model('Users', userSchema)
 
 
 interface DataStorage {
@@ -29,12 +29,15 @@ interface DataStorage {
 export class DatabaseStorage implements DataStorage {
     
     async readStorage(): Promise<String>{
-        let data = await userCollection.find()
+        let data = await userModel.find()
         return JSON.stringify(data)
     }
     async updateStorage(data: User[]): Promise<void> {
-        await userCollection.deleteMany()
-        await userCollection.insertMany(data)
+        await userModel.deleteMany()
+        for (const user of data) {
+            const doc = new userModel(user)
+            await doc.save()
+        }
     }
 }
 

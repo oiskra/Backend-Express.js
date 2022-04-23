@@ -1,7 +1,25 @@
 [
   {
-    "login": "nazwa",
-    "password": "haslo",
+    "login": "user1",
+    "password": "user1",
+    "notes": [],
+    "tags": []
+  },
+  {
+    "login": "user2",
+    "password": "user2",
+    "notes": [],
+    "tags": []
+  },
+  {
+    "login": "login",
+    "password": "password",
+    "notes": [],
+    "tags": []
+  },
+  {
+    "login": "login1",
+    "password": "password1",
     "notes": [],
     "tags": []
   }
