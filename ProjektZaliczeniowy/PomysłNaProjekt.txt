@@ -50,6 +50,7 @@ architektura aplikacji:
 	put /user
 	delete /user/:id (ADMIN)
 	get /user/all (ADMIN)
+	put /user/:id (ADMIN)
 	get /market
 	post /market/:id (middleware checks if user owns the car)
 	delete /market/:id (middleware checks if market has a car)
