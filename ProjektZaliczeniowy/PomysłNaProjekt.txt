@@ -46,7 +46,8 @@ architektura aplikacji:
 	get /user
 	get /user/:username
 	get /user/cars
-	put /user/races
+	get /user/races
+	put /user
 	delete /user/:id (ADMIN)
 	get /user/all (ADMIN)
 	get /market
@@ -57,7 +58,6 @@ architektura aplikacji:
 	post /race/:username
 	get /race/:id
 	get race/all (ADMIN)	
-
 3. all
 	post /register
 	post /login
