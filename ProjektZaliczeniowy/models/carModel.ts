@@ -47,9 +47,10 @@ const carSchema = new mongoose.Schema({
 })
 
 carSchema.pre('save', function() {
-    const priceCalc : Number = this.statistics.speed + this.statistics.acceleration + this.statistics.braking + this.statistics.grip
-    this.price = priceCalc 
+    const priceCalc : number = this.statistics.speed + this.statistics.acceleration + this.statistics.braking + this.statistics.grip
+    this.price = priceCalc * 100
 })
+
 
 const carModel = mongoose.model('market', carSchema)
 export default carModel

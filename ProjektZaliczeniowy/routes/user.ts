@@ -1,5 +1,8 @@
 import express from 'express' 
 import {Request, Response} from 'express'
+import userModel from '../models/userModel'
+import carModel from '../models/carModel'
+import raceModel from '../models/raceModel'
 
 
 const userRouter = express.Router() 
