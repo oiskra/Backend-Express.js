@@ -1,12 +1,15 @@
 import express from 'express'
 import {Request, Response} from 'express'
+import raceModel from '../models/raceModel'
+import authMW from '../middleware/auth'
+import adminRoleMW from '../middleware/adminRole'
 
 const raceRouter = express.Router()
 
-raceRouter.post('/:username', (req: Request, res: Response) => {})
+raceRouter.post('/:username', authMW, (req: Request, res: Response) => {})
 
-raceRouter.get('/:id', (req: Request, res: Response) => {})
+raceRouter.get('/:id', authMW, (req: Request, res: Response) => {})
 
-raceRouter.get('/all', (req: Request, res: Response) => {}) //admin
+raceRouter.get('/all', authMW, adminRoleMW, (req: Request, res: Response) => {}) //admin
 
 export default raceRouter

@@ -2,7 +2,7 @@ import {Request, Response, NextFunction} from 'express'
 import userModel from '../models/userModel'
 import jwt from 'jsonwebtoken'
 
-const auth = async (req: Request, res: Response, next: NextFunction) => {
+const authMW = async (req: Request, res: Response, next: NextFunction) => {
     const token : string = req.headers.authorization?.split(' ')[1] ?? ''
     if(!token) res.sendStatus(401)
     
@@ -18,7 +18,7 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
     next()
 }
 
-export default auth
+export default authMW
 
 
 

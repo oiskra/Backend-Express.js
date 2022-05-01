@@ -3,41 +3,43 @@ import {Request, Response} from 'express'
 import userModel from '../models/userModel'
 import carModel from '../models/carModel'
 import raceModel from '../models/raceModel'
+import authMW from '../middleware/auth'
+import adminRoleMW from '../middleware/adminRole'
 
 
 const userRouter = express.Router() 
 
-userRouter.get('/', (req: Request, res: Response) => {
+userRouter.get('/', authMW, (req: Request, res: Response) => {
     res.send()
 })
 
-userRouter.get('/:username', (req: Request, res: Response) => {
+userRouter.get('/:username', authMW, (req: Request, res: Response) => {
     res.send()
 })
 
-userRouter.get('/cars', (req: Request, res: Response) => {
+userRouter.get('/cars', authMW, (req: Request, res: Response) => {
     res.send()
 })
 
-userRouter.get('/races', (req: Request, res: Response) => {
+userRouter.get('/races', authMW, (req: Request, res: Response) => {
     res.send()
 })
 
-userRouter.put('/', (req: Request, res: Response) => {
+userRouter.put('/', authMW, (req: Request, res: Response) => {
     res.send()
 })
 
-userRouter.delete('/:id', (req: Request, res: Response) => {
+userRouter.delete('/:id', authMW, adminRoleMW, (req: Request, res: Response) => {
     //admin
     res.send()
 })
 
-userRouter.get('/all', (req: Request, res: Response) => {
+userRouter.get('/all', authMW, adminRoleMW, (req: Request, res: Response) => {
     //admin
     res.send()
 })
 
-userRouter.put('/:id', (req: Request, res: Response) => {
+userRouter.put('/:id', authMW, adminRoleMW, (req: Request, res: Response) => {
     //admin
     res.send()
 })
