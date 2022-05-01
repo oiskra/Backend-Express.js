@@ -1,5 +1,7 @@
 import express from 'express'
 import {Request, Response} from 'express'
+import carModel from '../models/carModel'
+import userModel from '../models/userModel'
 
 const marketRouter = express.Router()
 
