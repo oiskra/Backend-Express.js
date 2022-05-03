@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import carModel from './carModel'
 import userModel from './userModel'
 
+
 const raceSchema = new mongoose.Schema({
     playerOne: { 
         type: userModel,

@@ -1,28 +1,32 @@
 import mongoose from 'mongoose'
 
-
-const statisticsSchema = new mongoose.Schema({
+const statisticsSchema= new mongoose.Schema({
     speed: {
         type: Number,
         min: 1,
-        max: 10
+        max: 10,
+        required: true
     },
     acceleration: {
         type: Number,
         min: 1,
-        max: 10
+        max: 10,
+        required: true
     },
     grip: {
         type: Number,
         min: 1,
-        max: 10
+        max: 10,
+        required: true
     },
     braking: {
         type: Number,
         min: 1,
-        max: 10
+        max: 10,
+        required: true
     }
 })
+
 
 const carSchema = new mongoose.Schema({
     brand: {

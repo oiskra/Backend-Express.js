@@ -6,7 +6,7 @@ const adminRoleMW = (req: Request, res: Response, next: NextFunction) => {
     jwt.verify(token, 'secret', (err, data) => {
         
         const user = JSON.parse(JSON.stringify(data))
-        if(user.login != 'admin') res.sendStatus(401)
+        if(user.login != 'admin') return res.sendStatus(403)
 
         next()
     })

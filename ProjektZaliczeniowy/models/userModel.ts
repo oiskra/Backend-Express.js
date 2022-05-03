@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
-import carSchema from "./carModel"
-import raceSchema from "./raceModel"
+import carModel from "./carModel"
+import raceModel  from "./raceModel"
+
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -17,8 +18,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    cars: [carSchema],
-    races: [raceSchema],
+    cars: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: carModel        
+    },
+    races: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: raceModel        
+    },
     money:{
         type: Number,  
         default : 1000,
@@ -31,3 +38,16 @@ const userSchema = new mongoose.Schema({
 
 const userModel = mongoose.model("users", userSchema)
 export default userModel
+export const createAdmin = async(): Promise<void> => {
+    const admin = new userModel({
+        username: 'admin',
+        login: 'admin',
+        password: 'admin'
+    })
+    const dbAdmin = await userModel.findOne({login: admin.login})
+    if(!dbAdmin) {
+        await admin.save()
+        console.log('admin created')
+    }
+}
+

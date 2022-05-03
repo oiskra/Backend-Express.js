@@ -5,6 +5,7 @@ import userModel from '../models/userModel'
 import authMW from '../middleware/auth'
 
 
+
 const accRouter = express.Router()
 
 accRouter.post('/register', async (req: Request, res: Response) => {
@@ -16,8 +17,7 @@ accRouter.post('/register', async (req: Request, res: Response) => {
         const newUser = new userModel(JSON.parse(req.body))
         await newUser.save()
         res.status(201).send('User registered successfully')
-    } catch(e) {
-        console.log(e.message)
+    } catch {
         res.status(400).send('Try again')
     }
 })

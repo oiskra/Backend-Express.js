@@ -4,9 +4,11 @@ import userRouter from './routes/user'
 import raceRouter from './routes/race'
 import marketRouter from './routes/market'
 import {connectDb} from './db'
+import {createAdmin} from './models/userModel'
 
 
 connectDb() 
+createAdmin()
 const port = 3000 
 const app = express()
 
