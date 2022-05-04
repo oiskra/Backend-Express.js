@@ -18,19 +18,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    cars: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: carModel        
-    },
-    races: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: raceModel        
-    },
+    cars: [mongoose.SchemaTypes.ObjectId],
+    races: [mongoose.SchemaTypes.ObjectId],
     money:{
         type: Number,  
-        default : 1000,
-        min: 1000,
-        max: 1000
+        default : 1000
     } 
 }, {
     timestamps: true
@@ -38,6 +30,8 @@ const userSchema = new mongoose.Schema({
 
 const userModel = mongoose.model("users", userSchema)
 export default userModel
+
+
 export const createAdmin = async(): Promise<void> => {
     const admin = new userModel({
         username: 'admin',

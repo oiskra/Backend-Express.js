@@ -3,25 +3,30 @@ import carModel from './carModel'
 import userModel from './userModel'
 
 
-const raceSchema = new mongoose.Schema({
+const raceSchema= new mongoose.Schema({
     playerOne: { 
-        type: userModel,
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'userModel',
         required: true
     },
     carOne: {
-        type: carModel,
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'carModel',
         required: true
     },
     playerTwo: { 
-        type: userModel,
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'userModel',
         required: true
     },
     carTwo: {
-        type: carModel,
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'carModel',
         required: true
     },
     winner: {
-        type: userModel,
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'userModel',
         required: true
     }
 })

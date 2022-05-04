@@ -5,16 +5,17 @@ import userModel from '../models/userModel'
 import authMW from '../middleware/auth'
 
 
-
 const accRouter = express.Router()
 
 accRouter.post('/register', async (req: Request, res: Response) => {
-    //api gets username,login,password
     const {username, login, password} = req.body
     if(!username || !login || !password) res.status(400).send('Fill the gaps')
-    //creates token
     try {
-        const newUser = new userModel(JSON.parse(req.body))
+        const newUser = new userModel({
+            username: username,
+            login: login,
+            password: password
+        })
         await newUser.save()
         res.status(201).send('User registered successfully')
     } catch {
@@ -23,7 +24,6 @@ accRouter.post('/register', async (req: Request, res: Response) => {
 })
 
 accRouter.post('/login', async (req: Request, res: Response) => {
-    //gets login 
     const {login, password} = req.body
     if(!login || !password) res.status(400).send('Please try again')
 
@@ -35,7 +35,7 @@ accRouter.post('/login', async (req: Request, res: Response) => {
 })
 
 accRouter.post('/logout', authMW, (req: Request, res: Response) => {
-    res.clearCookie('token').send('User logged out successfully')
+    res.cookie('token', '', {maxAge: 1, httpOnly: false}).send('User logged out successfully')
 })
 
 export default accRouter

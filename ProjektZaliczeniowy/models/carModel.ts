@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const statisticsSchema= new mongoose.Schema({
+const statisticsSchema = new mongoose.Schema({
     speed: {
         type: Number,
         min: 1,

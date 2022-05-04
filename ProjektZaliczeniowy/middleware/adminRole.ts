@@ -1,16 +1,13 @@
 import {Request, Response, NextFunction} from 'express'
-import jwt from 'jsonwebtoken'
+import mongoose from 'mongoose'
+import userModel from '../models/userModel'
 
-const adminRoleMW = (req: Request, res: Response, next: NextFunction) => {
-    const token : string = req.headers.authorization?.split(' ')[1] ?? ''
-    jwt.verify(token, 'secret', (err, data) => {
-        
-        const user = JSON.parse(JSON.stringify(data))
-        if(user.login != 'admin') return res.sendStatus(403)
-
-        next()
-    })
-    
+const adminRoleMW = async (req: Request, res: Response, next: NextFunction) => {
+    const admin = await userModel.findOne({login: 'admin'})
+    if(res.locals.userId.equals(admin._id)) next()
+    else {
+        res.sendStatus(403)
+    }
 } 
 
 export default adminRoleMW
