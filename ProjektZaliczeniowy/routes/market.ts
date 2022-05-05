@@ -11,7 +11,7 @@ const marketRouter = express.Router()
 marketRouter.post('/', authMW, adminRoleMW, async (req: Request, res: Response) => {
     const {brand , model, statistics, tier} = req.body
     if(!brand || !model || !statistics || !tier){
-        return res.sendStatus(400)
+        return res.status(400).send('Invalid input')
     }
 
     const newCar = {
@@ -22,15 +22,16 @@ marketRouter.post('/', authMW, adminRoleMW, async (req: Request, res: Response) 
         tier: tier
     } 
 
-    const newCarInCars = new carsModel(newCar)
-    const newCarInMarket = new marketModel(newCar)
-
     try {
+        const newCarInCars = new carsModel(newCar)
+        const newCarInMarket = new marketModel(newCar)
+
         await newCarInCars.save()
         await newCarInMarket.save()
         res.status(201).send('New Car added to Market and Cars')       
-    } catch {
-        res.send('Failed to add new Car')  
+    } 
+    catch {
+        res.status(500).send('Failed to add new Car')  
     }
 }) 
 
@@ -59,8 +60,8 @@ marketRouter.post('/sell/:id', authMW, async (req: Request, res: Response) => {
         .save()
         .then(() => console.log('Car sold to market'))
         .catch((err: Error) => {
-           res.sendStatus(400)
-           console.log(err.message)
+            console.log(err.message)
+            return res.status(500).send('Failed to sell the car, try again later')
         })
     
     seller.money += carPrice
@@ -68,49 +69,69 @@ marketRouter.post('/sell/:id', authMW, async (req: Request, res: Response) => {
     await seller 
         .save()  
         .then(() => console.log('Car deleted from user, money added'))
-        .catch(() => res.sendStatus(400))
+        .catch(() => res.status(500).send('Failed to add car to market, try again later'))
     
-    res.send('you own the car you want to sell')
+    res.send('Car sold to market')
 })
 
 marketRouter.get('/', authMW, async (req: Request, res: Response) => {
-    const market = await marketModel.find()
-    res.send(market)
+    try {
+        const market = await marketModel.find()
+        res.send(market)
+    } catch {
+        res.status(500).send('Market exploded')
+    }
 })
 
 marketRouter.put('/:id', authMW, adminRoleMW, async (req: Request, res: Response) => {
     const update = req.body
-    await carsModel.updateOne({_id: req.params.id}, update)    
-    await marketModel.updateOne({_id: req.params.id}, update)    
+    if(req.body._id) return res.status(400).send('You cannot update id!')
+
+    try {
+        await carsModel.updateOne({_id: req.params.id}, update)    
+        await marketModel.updateOne({_id: req.params.id}, update)    
+        res.send(`Car with id ${req.params.id}, updated successfully`)
+    } catch {
+        res.status(500).send('Failed to update car with id ${req.params.id}')
+    }
 }) 
 
 marketRouter.delete('/buy/:id', authMW, async (req: Request, res: Response) => {
     const buyer = await userModel.findById(res.locals.userId)
     const marketBuy = await marketModel.findById(req.params.id)
+    
+    if(!marketBuy) return res.status(404).send('There is no such car in the market')
+    
     const buyersMoney: number = buyer.money
     const carPrice: number = marketBuy.price
 
-    if(!marketBuy) return res.sendStatus(404)
-    if(buyersMoney >= carPrice) {
-        await userModel.updateOne({_id: res.locals.userId}, {
-            $push: {
-                cars: marketBuy._id
-            },
-            money: buyersMoney - carPrice
-        })
+    try {
+        if(buyersMoney >= carPrice) {
+            await userModel.updateOne({_id: res.locals.userId}, {
+                $push: {
+                    cars: marketBuy._id
+                },
+                money: buyersMoney - carPrice
+            })
 
-        await marketModel.deleteOne({_id: req.params.id})
-        res.send('You bought a car')
-    } else {
-        res.status(400).send(`You can\'t afford this car. You\'re lacking $${(buyersMoney-carPrice)*(-1)}`)
+            await marketModel.deleteOne({_id: req.params.id})
+            res.send(`You bought a ${marketBuy.brand} ${marketBuy.model}`)
+        } else {
+            res.status(400).send(`You can\'t afford this car. You\'re lacking $${(buyersMoney-carPrice)*(-1)}`)
+        }
+    } catch {
+        res.sendStatus(500)
     }
-
 })
 
 marketRouter.delete('/:id', authMW, adminRoleMW, async (req: Request, res: Response) => {
-    await marketModel.deleteOne({_id: req.params.id})
-    await carsModel.deleteOne({_id: req.params.id})
-    res.send('deleted')
+    try {
+        await marketModel.deleteOne({_id: req.params.id})
+        await carsModel.deleteOne({_id: req.params.id})
+        res.send('Car with id ' + req.params.id + ' was deleted successfully')
+    } catch {
+        res.status(404).send('Failed to delete car')
+    }
 })
 
 export default marketRouter

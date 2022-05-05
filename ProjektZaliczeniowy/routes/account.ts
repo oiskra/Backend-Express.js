@@ -18,10 +18,11 @@ accRouter.post('/register', async (req: Request, res: Response) => {
             login: login,
             password: password
         })
+        
         await newUser.save()
         res.status(201).send('User registered successfully')
     } catch {
-        res.status(400).send('Try again')
+        res.status(500).send('Try again')
     }
 })
 

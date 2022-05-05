@@ -7,6 +7,7 @@ export const connectDb = async (): Promise<void> => {
         console.log('DB connection established..')
     } catch(error) {
         console.log(error);
+        throw (new Error('Failed to connect to database'))
     }
 
 }

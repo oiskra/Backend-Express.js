@@ -2,8 +2,7 @@ import mongoose from 'mongoose';
 
 const raceSchema= new mongoose.Schema({
     playerOne: { 
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'users',
+        type: String,
         required: true
     },
     carOne: {
@@ -12,8 +11,7 @@ const raceSchema= new mongoose.Schema({
         required: true
     },
     playerTwo: { 
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'users',
+        type: String,
         required: true
     },
     carTwo: {

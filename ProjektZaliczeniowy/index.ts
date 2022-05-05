@@ -1,4 +1,5 @@
 import express from 'express'
+import {Request, Response, NextFunction} from 'express'
 import accRouter from './routes/account'
 import userRouter from './routes/user'
 import raceRouter from './routes/race'
@@ -7,12 +8,19 @@ import {connectDb} from './db'
 import {createAdmin} from './models/userModel'
 
 
-connectDb() 
-createAdmin()
 const port = 3000 
 const app = express()
 
 app.use(express.json())
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+    connectDb()
+        .catch(() => {
+            return res.status(500).send('Failed to connect to database')
+        }) 
+    createAdmin()
+    next()
+})
 app.use('/user', userRouter)
 app.use('/account', accRouter)
 app.use('/race', raceRouter)
