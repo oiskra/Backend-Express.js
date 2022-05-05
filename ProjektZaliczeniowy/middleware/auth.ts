@@ -13,7 +13,7 @@ const authMW = (req: Request, res: Response, next: NextFunction) => {
         if(!dbUser) return res.sendStatus(403)
 
         res.locals.userId = dbUser._id
-        console.log('auth completedasd')
+        console.log('auth completed')
         next()
     })
 }

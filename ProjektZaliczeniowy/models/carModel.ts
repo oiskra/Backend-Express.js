@@ -55,6 +55,6 @@ carSchema.pre('save', function() {
     this.price = priceCalc * 100
 })
 
-
-const carModel = mongoose.model('market', carSchema)
-export default carModel
+const carsModel = mongoose.model('cars', carSchema)
+const marketModel = mongoose.model('market', carSchema)
+export {carsModel, marketModel}

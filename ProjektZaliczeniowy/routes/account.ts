@@ -9,6 +9,8 @@ const accRouter = express.Router()
 
 accRouter.post('/register', async (req: Request, res: Response) => {
     const {username, login, password} = req.body
+    const userCheck = await userModel.exists({login: login})
+    if(userCheck) return res.status(400).send('User already exists, try to log in')
     if(!username || !login || !password) res.status(400).send('Fill the gaps')
     try {
         const newUser = new userModel({
@@ -24,12 +26,14 @@ accRouter.post('/register', async (req: Request, res: Response) => {
 })
 
 accRouter.post('/login', async (req: Request, res: Response) => {
+    const loggedCheck = req.headers.cookie
+    if(loggedCheck) return res.status(400).send('User already logged in')
     const {login, password} = req.body
     if(!login || !password) res.status(400).send('Please try again')
 
     const token: string = jwt.sign(JSON.stringify(req.body),'secret')
-    const user = await userModel.find({login: login})
-    if(!user) res.status(404).send('User not found, please register first')
+    const user = await userModel.findOne({login: login})
+    if(!user) return res.status(404).send('User not found, please register first')
 
     res.cookie('token', token).status(200).send('User logged in successfully')
 })

@@ -1,8 +1,6 @@
 import express from 'express' 
 import {Request, Response} from 'express'
 import userModel from '../models/userModel'
-import carModel from '../models/carModel'
-import raceModel from '../models/raceModel'
 import authMW from '../middleware/auth'
 import adminRoleMW from '../middleware/adminRole'
 import console from 'console'
@@ -13,6 +11,7 @@ const userRouter = express.Router()
 userRouter.get('/', authMW, async (req: Request, res: Response) => {
     const user = await userModel
         .findOne({_id: res.locals.userId})
+    console.log(user)
     res.send(user)
 })
 
@@ -20,13 +19,16 @@ userRouter.get('/cars', authMW, async (req: Request, res: Response) => {
     const userCars = await userModel
         .findOne({_id: res.locals.userId})
         .select('cars')
+        .populate('cars')
     res.send(userCars)
 })
 
 userRouter.get('/races', authMW, async (req: Request, res: Response) => {
     const userRaces = await userModel
-    .findOne({_id: res.locals.userId})
-    .select('races')
+        .findOne({_id: res.locals.userId})
+        .select('races')
+        .populate('races')
+        
     res.send(userRaces)
 })
 
@@ -48,7 +50,7 @@ userRouter.get('/:username', authMW, async (req: Request, res: Response) => {
 userRouter.put('/', authMW, async (req: Request, res: Response) => {
     const userToUpdate = await userModel
         .updateOne({_id: res.locals.userId}, req.body)
-    res.send('Changes applied, please log in again')
+    res.send('Changes applied')
 })
 
 userRouter.put('/:id', authMW, adminRoleMW, async (req: Request, res: Response) => {

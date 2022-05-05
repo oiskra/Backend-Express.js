@@ -1,32 +1,28 @@
 import mongoose from 'mongoose';
-import carModel from './carModel'
-import userModel from './userModel'
-
 
 const raceSchema= new mongoose.Schema({
     playerOne: { 
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: 'userModel',
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
         required: true
     },
     carOne: {
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: 'carModel',
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'cars',
         required: true
     },
     playerTwo: { 
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: 'userModel',
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
         required: true
     },
     carTwo: {
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: 'carModel',
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'cars',
         required: true
     },
     winner: {
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: 'userModel',
+        type: String,
         required: true
     }
 })
