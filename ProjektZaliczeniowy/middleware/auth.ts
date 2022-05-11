@@ -7,7 +7,7 @@ const authMW = (req: Request, res: Response, next: NextFunction) => {
     if(!token) return res.sendStatus(401)
     
     jwt.verify(token, 'secret', async (err, data) => {
-        if(err) res.sendStatus(401)        
+        if(err) return res.sendStatus(401)        
         const tokenUser = JSON.parse(JSON.stringify(data))
         let dbUser = await userModel.findOne({login: tokenUser.login})
         if(!dbUser) return res.sendStatus(403)

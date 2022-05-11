@@ -9,20 +9,6 @@ import mongoose from 'mongoose'
 const raceRouter = express.Router();
 
 raceRouter.get("/all", authMW, async (req: Request, res: Response) => {
-    const race = await userModel
-        .where({_id: res.locals.userId})
-        .select('races')
-        .populate({
-            path: 'races', 
-            populate: {
-                path: 'carOne carTwo',
-                select: 'brand model statistics'
-            }
-        })
-    res.send(race)    
-})
-
-raceRouter.get("/adminAll", authMW, adminRoleMW, async (req: Request, res: Response) => {
     const races = await raceModel.find()
         .populate('carOne carTwo', {
             brand: 1, 
@@ -54,9 +40,6 @@ raceRouter.post("/:username", authMW, async (req: Request, res: Response) => {
         const rnd: number = Math.floor(Math.random() * playerTwo.cars.length)
         return playerTwo.cars[rnd]
     })
-
-    console.log(playerOneCar)
-    console.log(playerTwoCar)
     
     let statsOne: number = 0
     for (const value of Object.values(playerOneCar.statistics.toObject())) {
@@ -126,7 +109,7 @@ raceRouter.delete("/:id", authMW, adminRoleMW, async (req: Request, res: Respons
     const del = await raceModel.findByIdAndDelete(req.params.id)
 
     if(!del.acknowledged)
-        return res.status(400).send('Wrong update values')  
+        return res.status(400).send('Wrong delete id')  
 
     res.send('Race with id ' + req.params.id + ' deleted successfully')       
 })
