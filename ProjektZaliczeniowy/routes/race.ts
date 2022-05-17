@@ -82,22 +82,24 @@ raceRouter.post("/:username", authMW, async (req: Request, res: Response) => {
 })
 
 raceRouter.put("/:id", authMW, adminRoleMW, async (req: Request, res: Response) => {
-    const update = req.body
-    const race = await raceModel.updateOne({_id: req.params.id}, update)
     
-    if(!race.acknowledged)
-        return res.status(400).send('Wrong update values')    
-
-    res.send('Race with id ' + req.params.id + ' updated successfully')    
+    try {
+        const update = req.body
+        await raceModel.updateOne({_id: req.params.id}, update)
+        res.send('Race with id ' + req.params.id + ' updated successfully') 
+        
+    } catch {
+        return res.status(400).send('Wrong update values') 
+    }   
 })
 
 raceRouter.delete("/:id", authMW, adminRoleMW, async (req: Request, res: Response) => {
-    const del = await raceModel.findByIdAndDelete(req.params.id)
-
-    if(!del.acknowledged)
-        return res.status(400).send('Wrong delete id')  
-
-    res.send('Race with id ' + req.params.id + ' deleted successfully')       
+    try {
+        await raceModel.findByIdAndDelete(req.params.id) 
+        res.send('Race with id ' + req.params.id + ' deleted successfully')       
+    } catch {
+        res.status(400).send('Wrong Id') 
+    }
 })
 
 export default raceRouter;
