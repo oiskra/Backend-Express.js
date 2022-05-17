@@ -2,6 +2,7 @@ import express from "express";
 import { Request, Response } from "express";
 import raceModel from "../models/raceModel";
 import userModel from "../models/userModel";
+import { calculateRaceWinner } from '../helperFunctions'
 import authMW from "../middleware/auth";
 import adminRoleMW from "../middleware/adminRole";
 import mongoose from 'mongoose'
@@ -39,26 +40,9 @@ raceRouter.post("/:username", authMW, async (req: Request, res: Response) => {
     const playerTwoCar = playerTwoCarArray.find(() => {
         const rnd: number = Math.floor(Math.random() * playerTwo.cars.length)
         return playerTwo.cars[rnd]
-    })
-    
-    let statsOne: number = 0
-    for (const value of Object.values(playerOneCar.statistics.toObject())) {
-        if(typeof value == 'number')
-            statsOne += Number(value) 
-    }
+    }) 
 
-    let statsTwo: number = 0
-    for (const value of Object.values(playerTwoCar.statistics.toObject())) {
-        if(typeof value == 'number')
-            statsTwo += Number(value)        
-    }
-
-    const draw: boolean = statsOne == statsTwo
-    let raceOutcome: string
-    if(!draw) 
-        raceOutcome = statsOne > statsTwo ? playerOne.username : playerTwo.username
-    else 
-        raceOutcome = 'draw'   
+    const raceOutcome: string = calculateRaceWinner(playerOneCar, playerOne.username, playerTwoCar, playerTwo.username)
 
     try {
         const newRace = new raceModel({
@@ -75,20 +59,22 @@ raceRouter.post("/:username", authMW, async (req: Request, res: Response) => {
         switch (raceOutcome) {
             case playerOne.username: 
                 playerOne.money += 500
+                playerTwo.money += 100
                 break
             case playerTwo.username: 
                 playerTwo.money += 500
+                playerOne.money += 100
                 break
             case 'draw': 
-                playerOne.money += 250
-                playerTwo.money += 250
+                playerOne.money += 300
+                playerTwo.money += 300
                 break            
         }
         await newRace.save()  
         await playerOne.save()
         await playerTwo.save()
 
-        if(draw) return res.send('Race ended in a draw')
+        if(raceOutcome == 'draw') return res.send('Race ended in a draw')
         res.send(raceOutcome.toUpperCase() + ' won the race!')
     } catch (error) {
         res.sendStatus(500)

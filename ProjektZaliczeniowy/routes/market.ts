@@ -19,7 +19,7 @@ marketRouter.post('/', authMW, adminRoleMW, async (req: Request, res: Response) 
         brand: brand,
         model: model,
         statistics: statistics,
-        tier: tier
+        tier: tier,
     } 
 
     try {
