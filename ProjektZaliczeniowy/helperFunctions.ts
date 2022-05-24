@@ -1,6 +1,6 @@
 
 export const calculateRaceWinner = (carOne: any, usernameOne: string, carTwo: any, usernameTwo: string) : string => {
-
+    console.log(carTwo)
     let statsOne: number = 0
     for (const value of Object.values(carOne.statistics.toObject())) {
         if(typeof value == 'number')

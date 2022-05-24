@@ -44,7 +44,7 @@ userRouter.get('/all', authMW, adminRoleMW, async (req: Request, res: Response) 
 userRouter.get('/:username', authMW, async (req: Request, res: Response) => {
     if(req.params.username == 'admin') return res.sendStatus(401)
     const user = await userModel
-        .findOne({_id: res.locals.userId})    
+        .findOne({username: req.params.username})    
         .select('username cars races')
         .populate({
             path: 'races', 
@@ -63,10 +63,11 @@ userRouter.put('/', authMW, async (req: Request, res: Response) => {
     
     const userToUpdate = await userModel
         .updateOne({_id: res.locals.userId}, req.body)
-    
+       
     if(!userToUpdate.acknowledged)
         return res.status(400).send('Wrong update values')
-    res.send('Changes applied')
+
+    res.cookie('token', '', {maxAge: 1, httpOnly: false}).send('Changes applied, log in again')
 })
 
 userRouter.put('/:id', authMW, adminRoleMW, async (req: Request, res: Response) => {

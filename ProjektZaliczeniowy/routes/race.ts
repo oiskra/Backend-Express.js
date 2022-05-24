@@ -37,11 +37,9 @@ raceRouter.post("/:username", authMW, async (req: Request, res: Response) => {
     if(!playerOneCar) 
         return res.status(404).send('You don\'t own the car you want to drive, choose another one')
     
-    const playerTwoCar = playerTwoCarArray.find(() => {
-        const rnd: number = Math.floor(Math.random() * playerTwo.cars.length)
-        return playerTwo.cars[rnd]
-    }) 
-
+    const rnd: number = Math.floor(Math.random() * playerTwo.cars.length)
+    const playerTwoCar = playerTwo.cars[rnd]
+    console.log(playerTwoCar)
     const raceOutcome: string = calculateRaceWinner(playerOneCar, playerOne.username, playerTwoCar, playerTwo.username)
 
     try {
@@ -95,10 +93,17 @@ raceRouter.put("/:id", authMW, adminRoleMW, async (req: Request, res: Response) 
 
 raceRouter.delete("/:id", authMW, adminRoleMW, async (req: Request, res: Response) => {
     try {
-        await raceModel.findByIdAndDelete(req.params.id) 
+        const race = await raceModel.findByIdAndDelete(req.params.id)
+        console.log(race)
+        
+        await userModel.updateMany(
+            {$or: [{username: race.playerOne}, {username: race.playerTwo}]}, 
+            {$pull: {races: race._id}}) 
+
         res.send('Race with id ' + req.params.id + ' deleted successfully')       
     } catch {
         res.status(400).send('Wrong Id') 
+
     }
 })
 
